@@ -9,6 +9,7 @@ VIAL-GOUTEYRON Quentin
 KEEP TALKING AND NOBODY EXPLODES
 
 Matériel
+
 Potentiomètres : 2
 Boutons : 3
 Ecran LCD : 1
@@ -18,7 +19,6 @@ LED Verte : 6
 LED RGB : 1
 MEGA 2560 : 1
 BreadBoard : 1
-Câbles : Moulte
 
 Scénario
 
