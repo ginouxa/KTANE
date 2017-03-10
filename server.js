@@ -10,6 +10,9 @@ var socketServer;
 var serialPort;
 var portName = 'COM3'; //change this to your Arduino port
 var sendData = "";
+var code=[];
+var retour="";
+var codeEssai="";
 
 function SocketIO_serialemit(sendData){
     socketServer.emit('updateData',{pollOneValue:sendData});
@@ -31,8 +34,11 @@ function startServer(route,handle,debug)
 		console.log("Listening at: http://localhost:1337");
 		console.log("Server is up");
 	}); 
+        
+        console.log(essai('888888',generateCode('888888'.length)));
 	serialListener(debug);
 	initSocketIO(httpServer,debug);
+    
 }
 
 function initSocketIO(httpServer,debug)
@@ -55,6 +61,11 @@ function initSocketIO(httpServer,debug)
 	});
 	
     });
+    
+
+
+
+    
 }
 
 // Listen to serial port
@@ -84,6 +95,32 @@ function serialListener(debug)
        //EE.on('update');
       });  
     });  
+}
+
+function essai(codeEssai,code){
+    var tab =[];
+    tab=codeEssai.split('');
+    for(i=0;i<codeEssai.length;i++){
+        if(parseInt(tab[i]) === code[i]){
+            retour += '1';
+        } else {
+            retour += '0';
+        }
+    }
+    
+    return retour;
+}
+
+function generateCode(longueur){
+    for(i=0;i<longueur;i++){
+        code[i]= randomInt(0,9);
+        console.log(code[i]);
+    }
+   return code;
+   
+}
+function randomInt (low, high) {
+    return Math.floor(Math.random() * (high - low) + low);
 }
 
 exports.start = startServer;
