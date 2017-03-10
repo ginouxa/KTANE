@@ -15,17 +15,21 @@ res.write('<!DOCTYPE html>'+
 '</html>');
 res.end();
 });
+
 // test du serial port 
-var serialport = require('serialport');
+var SerialPort = require('serialport');
 
 // list serial ports:
-serialport.list(function (err, ports) {
+SerialPort.list(function (err, ports) {
 ports.forEach(function(port) {
 console.log(port.comName);
 });
 });
 
-var portName = '/dev/ttyACM0';
+
+server.listen(8080);
+var portName = 'COM3';
+/*
 var sp = new serialport(portName, {
 baudRate: 9600,
 dataBits: 8,
@@ -38,9 +42,9 @@ parser: serialport.parsers.readline("\r\n")
 sp.on('data', function(input) {
 console.log(input);
 });
-
-server.listen(8080);
-function serialListener()
+*/
+serialListener();
+function serialListener(res)
 {
     var receivedData = "";
     serialPort = new SerialPort(portName, {
@@ -63,7 +67,11 @@ function serialListener()
                receivedData = '';
          }
      // send the incoming data to browser with websockets.
-       socketServer.emit('update', sendData);
+       res.write(sendData);
       });  
     });  
 }
+
+
+
+server.listen(8080);
