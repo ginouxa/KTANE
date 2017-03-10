@@ -2,7 +2,7 @@ var fs = require('fs')
 ,http = require('http'),
 socketio = require('socket.io'),
 url = require("url"), 
-SerialPort = require("serialport")
+SerialPort = require("serialport")//,sleep = require('sleep')
 //EventEmitter = require("events")
 
 //var EE;
@@ -13,6 +13,7 @@ var sendData = "";
 var code=[];
 var retour="";
 var codeEssai="";
+
 
 function SocketIO_serialemit(sendData){
     socketServer.emit('updateData',{pollOneValue:sendData});
@@ -34,8 +35,7 @@ function startServer(route,handle,debug)
 		console.log("Listening at: http://localhost:1337");
 		console.log("Server is up");
 	}); 
-        
-        console.log(essai('888888',generateCode('888888'.length)));
+        generateCode(6);
 	serialListener(debug);
 	initSocketIO(httpServer,debug);
     
@@ -91,24 +91,30 @@ function serialListener(debug)
            receivedData = '';
          }
          // send the incoming data to browser with websockets.
-            SocketIO_serialemit(sendData);
+            essai(sendData,code);
+            //SocketIO_serialemit(sendData);
        //EE.on('update');
       });  
     });  
 }
 
 function essai(codeEssai,code){
+    
     var tab =[];
     tab=codeEssai.split('');
+    var array=['A','C','D','F','G','H'];
     for(i=0;i<codeEssai.length;i++){
-        if(parseInt(tab[i]) === code[i]){
-            retour += '1';
-        } else {
-            retour += '0';
+        console.log("TEST"+tab[i]+"CODE"+code[i]);
+        if(parseInt(tab[i]) == code[i]){
+            //setTimeout(function() {
+                serialPort.write(array[i]);
+               console.log("JE SUIS IIIIII : "+array[i]);
+            //}, 50);
+            
         }
     }
+
     
-    return retour;
 }
 
 function generateCode(longueur){

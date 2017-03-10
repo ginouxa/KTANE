@@ -105,9 +105,16 @@
 				
 		// recieve changed values by other client from server
 		io.socket.on('updateData', function (recievedData) {
-                    location.reload(); 
+                    //location.reload();
+                    console.log(recievedData);
+                    console.log
 			pollOneH = recievedData.pollOneValue/2; // recieve start poll value from server
 		});
+//                
+//		io.socket.on('updateData', function (recievedData) {
+//                    if (recievedData 
+//			pollOneH = recievedData.pollOneValue/2; // recieve start poll value from server
+//		});
 	    });
 	}
 	  
