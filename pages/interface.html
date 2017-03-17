@@ -1,8 +1,114 @@
 <!DOCTYPE HTML>
  <html>
-   <head>    
-    <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
+   <head>  
+       <meta charset=utf-8>
+<title>Bomb Challenge</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
+
     <style>
+        
+        @import url(https://fonts.googleapis.com/css?family=Play);
+html, body {
+height: 100%;
+}
+body {
+background: linear-gradient(135deg,#000 0%,#181818 25%,#00121b 50%,#140007 75%,#181818 100%);
+background: -webkit-linear-gradient(315deg,#000 0%,#181818 25%,#00121b 50%,#140007 75%,#181818 100%);
+background-size: 300% 300%;
+color: rgba(255, 255, 255, 0.9);
+font-family: 'Play', sans-serif;
+letter-spacing: .05em;
+margin: 0;
+text-transform: uppercase;
+position: relative;
+}
+main {
+background: rgba(255, 255, 255, 0.1);
+border-radius: 4px;
+text-align: center;
+padding: 60px;
+transform: translate(-50%, -50%);
+-webkit-transform: translate(-50%, -50%);
+position: absolute;
+left: 50%;
+top: 50%;
+}
+main:before {
+content: "\f1e2";
+font-family: 'FontAwesome';
+font-size: 110px;
+text-shadow: 6px 6px rgba(0, 0, 0, 0.4);
+transform: translate(-50%, -50%);
+-webkit-transform: translate(-50%, -50%);
+position: absolute;
+left: 50%;
+top: 0;
+}
+h1 {
+font-size: 96px;
+margin: 0 auto 30px;
+}
+h1 span {
+color: #1abc9c;
+font-size: 84px;
+}
+h1 .failed {
+color: #e74c3c;
+}
+input {
+background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+border: 2px solid #c0392b;
+color: rgba(255, 255, 255, 0.9);
+font-family: 'Play', sans-serif;
+font-size: 32px;
+line-height: 60px;
+outline: none;
+padding: 0 20px;
+text-transform: uppercase;
+}
+input::-moz-placeholder {
+color: rgba(255, 255, 255, 0.9);
+opacity: 1;
+}
+input:-ms-input-placeholder {
+color: rgba(255, 255, 255, 0.9);
+}
+input::-webkit-input-placeholder {
+color: rgba(255, 255, 255, 0.9);
+}
+/*ANIMATIONS*/
+body {
+animation: bombBackground 50s ease infinite;
+-webkit-animation: bombBackground 50s ease infinite;
+}
+@keyframes bombBackground {
+    0% {
+    background-position: 0% 50%;
+    }
+    50% {
+    background-position: 100% 50%;
+    }
+    100% {
+    background-position: 0% 50%;
+    }
+}
+@-webkit-keyframes bombBackground {
+    0% {
+    background-position: 0% 50%;
+    }
+    50% {
+    background-position: 100% 50%;
+    }
+    100% {
+    background-position: 0% 50%;
+    }
+}
+/*END ANIMATIONS*/
+        
+        
 	body {
 		margin: 0px;
 		padding: 0px;
@@ -34,16 +140,7 @@
 	<script src="/socket.io/socket.io.js"></script>
     <script>
 	// canvas request for all browsers
-	window.requestAnimFrame = (function(callback) {
-        return window.requestAnimationFrame || 
-        window.webkitRequestAnimationFrame || 
-        window.mozRequestAnimationFrame || 
-        window.oRequestAnimationFrame || 
-        window.msRequestAnimationFrame ||
-        function(callback) {
-          window.setTimeout(callback, 1000 / 30); // 30 frames per second
-	  };
-	})();
+
 	  
 	var iosocket;
 	var pollOneH = 0;
@@ -54,61 +151,35 @@
 	//var onOff = false; 
 	var toggleVal = 0;
 	  
-	function animation(poll1,text)
-	{
-	  var canvas = document.getElementById("myCanvas");
-          var content = canvas.getContext("2d");
-			
-	  // clear canvas
-	  content.clearRect(0, 0, 460, 540);
-	  
-	  content.fillStyle = 'black';
-	  content.textAlign = 'center';
-	  content.font = '20pt Calibri';
-	  
-	  // make the wobbely values stop 
-	  if(pollOneH*2 > prevPotValue+2 || pollOneH*2 < prevPotValue-2){
-		prevPotValue = potValue;
-		potValue = pollOneH*2;
-	  }
-
-	  content.fillText('Potmeter value: ' + potValue, text.x, text.y);
-
-          // render graph 
-	  content.fillStyle = 'orange';
-	  content.fillRect(poll1.x,(poll1.y-poll1.h),poll1.w,poll1.h);
-						
-	  content.fill();
-
-	  // request new frame
-	  requestAnimFrame(function() {
-	  
-	  if(poll1.h < pollOneH){
-		poll1.h += (pollOneH - poll1.h)*.15;
-	  }
-	  else if(poll1.h > pollOneH){
-		poll1.h -= (poll1.h - pollOneH)*.15;
-	  }
-	  text.y = (poll1.y - poll1.h) - 5;
-	  animation(poll1,text);
-	 });
-	}
+function explodeBomb()
+{
+  done = true;
+  $("#bombTimer").html("<span class='failed'>Failed!</span><br/>00" + ":" + "00" + ":" + "00");
+}
 	  
 	function initSocketIO()
 	{
 		io.socket = io.connect();
 		io.socket.on('onconnection', function(value) {
 		pollOneH = value.pollOneValue/2; // recieve start poll value from server
-		initPoll();
 		initButton();
-		initSlider();
 				
 		// recieve changed values by other client from server
 		io.socket.on('updateData', function (recievedData) {
-                    //location.reload();
                     console.log(recievedData);
                     console.log
-			pollOneH = recievedData.pollOneValue/2; // recieve start poll value from server
+                    var res =recievedData.split(":");
+                    // event si rev = 0 
+                    // affiche sa 
+                    if(res[0]== 0){
+                        clearInterval(intTimer);
+                        explodeBomb();
+                        return;
+                    }else if (res[0]==99){
+                        defusedBomb();
+                    }
+                    document.getElementById("Combinaison").innerHTML=res[0]; 
+                    document.getElementById("defuseString").value=res[1]; 
 		});
 //                
 //		io.socket.on('updateData', function (recievedData) {
@@ -118,65 +189,93 @@
 	    });
 	}
 	  
-	function initPoll()
-	{
-	   poll1 = {
-		x: 10,
-		y: 540,
-		w: 440,
-		h: 0
-	   }
-	   text = {
-		x:poll1.w/2,
-		y:100
-	   }
-	   potValue = pollOneH*2;
-	   prevPotValue = potValue;
-	   animation(poll1,text);
-	}
+
 	
 	function initButton()
 	{
 	   $( "#check" ).button();
 	}
-	
-	function initSlider()
-	{
-	     $( "#slider" ).slider({
-	     min:0,
-	     max:255,
-	     change: function(event,ui) {
-	        iosocket.emit('sliderval',ui.value);
-	        }
-	     });
-	}
-	
+
 	window.onload = function() {
 	     initSocketIO();
              
         };
+var intTimer;
+var done = false;
+    jQuery(document).ready(function ($) {
+  var startTime = new Date(0, 0, 0, 0, 1, 30, 0);
+  var referenceDate = new Date();
+  updateBombTimer(startTime.getMinutes(), startTime.getSeconds(), startTime.getMilliseconds());
+
+  intTimer = setInterval(function () {
+    var currentDate = new Date();
+    var diffDate = Math.abs(referenceDate - currentDate);
+    var newTime = (startTime.getTime() - new Date(0, 0, 0, 0, 0, 0, diffDate).getTime());
+    var newMil = (newTime % 1000);
+    var newSec = ((newTime / 1000) % 60);
+    var newMin = ((newTime / 60000) % 60);
+    updateBombTimer(newMin, newSec, newMil);
+  }, 1);
+
+  
+    
+  });
+
+function defusedBomb(){
+  done = true;
+      clearInterval(intTimer);
+      $("#try").hide();
+      $("#bombTimer").html("<span>Defused!</span><br/>" + $("#bombTimer").text());
+    }
+
+function explodeBomb()
+{
+  done = true;
+  $("#bombTimer").html("<span class='failed'>Failed!</span><br/>00" + ":" + "00" + ":" + "00");
+}
+
+function updateBombTimer(min, sec, mil)
+{
+  if (min < 0) {
+    clearInterval(intTimer);
+    explodeBomb();
+    return;
+  }
+
+  var formMin = Math.floor(min).toString();
+  var formSec = Math.floor(sec).toString();
+  var formMil = Math.floor(mil).toString();
+  formMil = formMil.substr(0, 2);
+  formMin = ("0".repeat(2 - formMin.length) + formMin);
+  formSec = ("0".repeat(2 - formSec.length) + formSec);
+  formMil = ("0".repeat(2 - formMil.length) + formMil);
+  $("#bombTimer").text(formMin + ":" + formSec + ":" + formMil);
+}
       
-      $(document).ready(function() {
-        $('#check').click(function() {
-            toggleVal += 1;
-	    toggleVal %= 2;
-	    iosocket.emit('buttonval',toggleVal);
-	 });
-	});
+          
+//        $('#check').click(function() {
+//            var minute = $('#minute').val(); 
+//            var seconde = $('#seconde').val();
+//            document.getElementById("check").innerHTML='hello'; 
+//	    io.socket.emit('buttonval',(minute*60)+seconde);
+//	 });
+	
     </script>
   </head>
   <body>
-   <div id="rData">
-	<h2>Data from Arduino</h2>
-    <canvas id="myCanvas" width="460" height="540"></canvas>
-   </div>
-       <div id="sData">
-	<h2>Data to Arduino</h2>
-	<div id="btnHolder">
-	  <input type="checkbox" id="check" value="toggle"/><label for="check">Toggle LED</label>
-	</div>
-	<p id="sliderTxt">LED Dimmer</p>
-	<div id="slider"></div>
-   </div> 
+      <div id="test" >
+          
+      </div>
+
+        
+      
+  <main>
+    <h1 id="bombTimer">00:00:00</h1>
+    <div id="try"> Tentative:<div id="Combinaison"> </div></div>
+    <input type="text" id="defuseString" disabled>
+  </main>
+      
+      
   </body>
+  
 </html>

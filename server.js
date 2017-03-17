@@ -11,9 +11,10 @@ var serialPort;
 var portName = 'COM3'; //change this to your Arduino port
 var sendData = "";
 var code=[];
+var trys = 10;
 var retour="";
 var codeEssai="";
-
+var codeTemp ="156325";
 
 function SocketIO_serialemit(sendData){
     socketServer.emit('updateData',{pollOneValue:sendData});
@@ -54,7 +55,11 @@ function initSocketIO(httpServer,debug)
 	socket.emit('updateData',{pollOneValue:data});
 	});
 	socket.on('buttonval', function(data) {
-		serialPort.write(data + 'E');
+            console.log(data);
+            /*setInterval(function(){
+          console.log(data);
+          serialPort.write('THE END');
+        }, data * 1000);  */
 	});
 	socket.on('sliderval', function(data) {
 		serialPort.write(data + 'P');
@@ -91,30 +96,55 @@ function serialListener(debug)
            receivedData = '';
          }
          // send the incoming data to browser with websockets.
-            essai(sendData,code);
+          
+          
+            if(sendData.length != 0){
+              if(codeTemp != sendData){
+                  codeTemp=sendData;
+                    trys = trys - 1;// -1 vie
+                  if (essai(sendData,code)==true){
+
+                      trys=99;
+                  }
+                  if (trys <= 0 ){
+                  socketServer.emit('updateData', '0:BOOOOM');
+
+                  }else{
+                  socketServer.emit('updateData', trys+':'+sendData);
+                  }
+              }
+            }
             //SocketIO_serialemit(sendData);
        //EE.on('update');
+       
       });  
     });  
 }
 
 function essai(codeEssai,code){
-    
-    var tab =[];
-    tab=codeEssai.split('');
-    var array=['A','C','D','F','G','H'];
-    for(i=0;i<codeEssai.length;i++){
-        console.log("TEST"+tab[i]+"CODE"+code[i]);
-        if(parseInt(tab[i]) == code[i]){
-            //setTimeout(function() {
-                serialPort.write(array[i]);
-               console.log("JE SUIS IIIIII : "+array[i]);
-            //}, 50);
-            
-        }
-    }
+ 
+        var tab =[];
+        tab=codeEssai.split('');
+        var count = 0;
+        var array=['A','C','D','F','G','H'];
+        for(i=0;i<codeEssai.length;i++){
+            console.log("TEST"+tab[i]+"CODE"+code[i]);
+            if(parseInt(tab[i]) == code[i]){
+                //setTimeout(function() {
+                    serialPort.write(array[i]);
+                   console.log("JE SUIS IIIIII : "+array[i]);
+                //}, 50);
+                count++;
+            }
 
+        }
+        console.log(count);
+        console.log(code.length);
+            if(count == codeEssai.length){
+                return true;
+            }
     
+    return false;
 }
 
 function generateCode(longueur){
