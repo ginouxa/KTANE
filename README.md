@@ -6,7 +6,7 @@ BANC Anthony
 CARLO Romain
 GINOUX Axel
 VIAL-GOUTEYRON Quentin
-KEEP TALKING AND NOBODY EXPLODES
+KEEP CALM AND NOBODY EXPLODES
 
 Matériel
 
@@ -32,10 +32,12 @@ Les LEDs vertes s'allumeront en fonction du nombre d'entiers corrects. Les LEDs 
 
 Liste des tâches :
 
--Application WEB : GINOUX Axel & VIAL-GOUTEYRON Quentin
+-Application WEB : CARLO Romain & VIAL-GOUTEYRON Quentin
 
--Application ARDUINO : CARLO Romain & BANC Anthony
+-Application ARDUINO : BANC Anthony
 
--Montage : BANC Anthony
+-Montage : BANC Anthony & GINOUX Axel
+
+-Design : GINOUX Axel
 
 
