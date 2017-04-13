@@ -126,7 +126,7 @@ function essai(codeEssai,code){
         var tab =[];
         tab=codeEssai.split('');
         var count = 0;
-        var array=['A','C','D','F','G','H'];
+        var array=['C','A','D','F','G','H'];
         for(i=0;i<codeEssai.length;i++){
             console.log("TEST"+tab[i]+"CODE"+code[i]);
             if(parseInt(tab[i]) == code[i]){

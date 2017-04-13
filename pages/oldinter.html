@@ -156,9 +156,9 @@
         
         var intTimer;
 var done = false;
-//*******************************************************************************///
+
 jQuery(document).ready(function ($) {
-  var startTime = new Date(0, 0, 0, 0, 1, 30, 0);
+  var startTime = new Date(0, 0, 0, 0, 0, 45, 0);
   var referenceDate = new Date();
   updateBombTimer(startTime.getMinutes(), startTime.getSeconds(), startTime.getMilliseconds());
 
@@ -172,12 +172,22 @@ jQuery(document).ready(function ($) {
     updateBombTimer(newMin, newSec, newMil);
   }, 1);
 
-function defusedBomb()
-{
+  $("#defuseString").on("input propertychange paste", function () {
+    var defuseKey = $("#defuseString").val();
+    if (defuseKey.toLowerCase() == solution().toLowerCase() && !done) {
+      done = true;
+      clearInterval(intTimer);
+      $("#bombTimer").html("<span>Defused!</span><br/>" + $("#bombTimer").text());
+    }
+  });
+});
 
-  clearInterval(intTimer);
+function solution() { return "datanom2017"; }
+
+function explodeBomb()
+{
   done = true;
-   $("#bombTimer").html("<span>Defused!</span><br/>" + $("#bombTimer").text());
+  $("#bombTimer").html("<span class='failed'>Failed!</span><br/>00" + ":" + "00" + ":" + "00");
 }
 
 function updateBombTimer(min, sec, mil)
